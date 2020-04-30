@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>FromJSONToHTMLTable</title>
+    <style>
+        table,
+        th {
+            border: groove;
+            border-collapse: collapse;
+        }
+
+        td {
+            border: 1px solid black;
+        }
+
+        td,
+        th {
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrapper">
+
+    </div>
+    <script>
+        function fromJSONToHTMLTable(input) {
+            const symbol = {
+                "&": '&amp;',
+                "<": '&lt;',
+                ">": '&gt;',
+                "\"": '&quot;',
+                "\'": '&#39;'
+            };
+
+            obj = JSON.parse(input);   // parse the JSON input
+            // console.log(obj);     // Receive Array of Objects
+
+            // HEADER
+            // Taking the names of the first object for the header of the table.
+            let header = Object.keys(obj[0]);
+            // console.log(header);  // array of the names in the header
+            let headerOutput = '';
+            header.map(x => headerOutput += `<th>${x}</th>`);
+            // PRINT FIRST PART
+            console.log('<table>');
+            console.log(`  <tr>${headerOutput}</tr>`);
+
+            //BODY
+            let rowData = [];
+            for (let i = 0; i < obj.length; i++) {
+                rowData[i] = Object.values(obj[i]).map((x) => {    // checking the text values for special chars;
+                    if (typeof (x) === 'string') {
+                        return x.split("").map(y => symbol[y] ? symbol[y] : y).join("");  // Don't forget to RETURN
+                    } else {
+                        return x;
+                    }
+                });
+                rowDataOutput = '';
+                rowData[i].map(x => rowDataOutput += `<td>${x}</td>`)
+                console.log(`  <tr>${rowDataOutput}</tr>`);
+            }
+            console.log('</table>');
+        }
+        window.onload = function () {
+            let container = document.getElementById('wrapper');
+            container.innerHTML = fromJSONToHTMLTable(['[{"Name":"Tomatoes & Chips","Price":2.35},{"Name":"J&B Chocolate","Price":0.96}]']);
+        };
+    </script>
+</body>
+
+</html>
